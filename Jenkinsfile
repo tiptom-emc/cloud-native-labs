@@ -43,14 +43,14 @@ pipeline {
             echo "Rollback for canary deployment."
             script {
                 openshift.withCluster {
-                    openshift.withProject('') {
+                    openshift.withProject('userXY') {
                         openshift.selector('dc', 'gateway-canary').rollout().undo()
 
                         //wait for rollout
                         openshift.selector('dc', 'gateway-canary').rollout().status()
 
                         //set canary imagestream back to production tag
-                        openshift.tag("coolstore/gateway:latest", "/gateway-canary:latest")
+                        openshift.tag("coolstore/gateway:latest", "userXY/gateway-canary:latest")
                     }
                 }
             }
@@ -65,9 +65,9 @@ pipeline {
     steps {
         script {
             openshift.withCluster() {
-                openshift.withProject('') {
+                openshift.withProject('userXY') {
                     //Tag latest from build namespace
-                    openshift.tag("/gateway-canary:latest", "/gateway:latest")
+                    openshift.tag("userXY/gateway-canary:latest", "userXY/gateway:latest")
 
                     /***
                      * Rollout
